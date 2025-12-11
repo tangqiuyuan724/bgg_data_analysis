@@ -6,12 +6,12 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 1000)
 pd.set_option('display.float_format', lambda x: '%.2f' % x)
 
-# loading cleaned dataset
-df = pd.read_csv('dataset/cleaned_bgg_data.csv')
+# loading cleaned output_set
+df = pd.read_csv('output_set/cleaned_bgg_data.csv')
 
 sns.set(style='whitegrid')
 
-# statistics of dataset
+# statistics of output_set
 print("info:")
 print(df.info())
 print("statistics:")
@@ -54,7 +54,7 @@ df_final_clean = df[df['Year Published'] <= cutoff_year].copy()
 print(f"exclude data after {cutoff_year} to eliminate tail noise caused by Bayesian penalty")
 print(f"current data volume: {len(df_final_clean)}")
 df = df_final_clean
-df.to_csv("dataset/final_cleaned_bgg_data.csv", index=False)
+df.to_csv("output_set/final_cleaned_bgg_data.csv", index=False)
 
 # year trend after cutting off
 plt.figure(figsize=(12, 6))
