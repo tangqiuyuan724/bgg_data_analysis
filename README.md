@@ -6,6 +6,6 @@ to avoid data leakage, we will drop these columns before training:
 * name: it has little impact on prediction of bayes average.
 
 cross conference to fix year published:
-if year published is invalid(<1900 or > 2025) in the left table, try to use year published in the right table.
-if both values of year published in two tables are invalid, drop the row.
-we successfully fixed 238 rows which had invalid year published in this way.
+* if year published is invalid(<1900 or > 2025) in the left table, try to use year published in the right table.
+* if both values of year published in two tables are invalid, drop the row.
+* we successfully fixed 238 rows which had invalid year published in this way.

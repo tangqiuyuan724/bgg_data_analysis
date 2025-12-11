@@ -49,6 +49,10 @@ def fix_year(row):
 
 # apply fix year
 df['Year Published'] = df.apply(fix_year, axis=1)
+# transfer 'Year Published' into int
+df['Year Published'] = df['Year Published'].astype(int)
+# drop duplicated column of 'id' and 'year published'
+df = df.drop(columns=['yearpublished','id'],axis=1)
 
 # 4. filtering and cleaning
 # drop invalid values
@@ -66,6 +70,8 @@ print("-"*30)
 
 # 5. check results
 print(f"after cleaning, the final shape of dataset: {df.shape}")
+print("info of dataset:")
+print(df.info())
 print("preview of the first five rows: ")
 print(df[['ID', 'Name', 'Year Published', 'bayesaverage', 'Mechanics']].head())
 
