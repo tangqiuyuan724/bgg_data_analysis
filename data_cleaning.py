@@ -61,11 +61,15 @@ df = df[(df['Year Published']>1900) & (df['Year Published']<=2025)]
 after_count = len(df)
 print(f"with cross conference, we fix {before_count-after_count} rows which had invalid year published")
 
-# Mechanics is a text feature, fill missing value with 'Unknown'
-df['Mechanics'] = df['Mechanics'].fillna('Unknown')
-
 # for key numerical features, if missing, delete the row directly, as it cannot be accurately filled
 df = df.dropna(subset=['Complexity Average', 'Min Age', 'Play Time'])
+
+# for text features, fill missing value with 'Unknown'
+df['Mechanics'] = df['Mechanics'].fillna('Unknown')
+df['Domains'] = df['Domains'].fillna('Unknown')
+
+# for numerical feature which will not be used in future training and testing, fill nan with -1 to mark it as an outlier
+df['Owned Users'] = df['Owned Users'].fillna(-1).astype(int)
 print("-"*30)
 
 # 5. check results
