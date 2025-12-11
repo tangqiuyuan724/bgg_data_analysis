@@ -72,3 +72,63 @@ plt.figure(figsize=(10, 8))
 sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", vmin=-1, vmax=1)
 plt.title('Correlation Heatmap', fontsize=15)
 plt.show()
+
+# 5. mechanics vs bayes average
+# As a board game could have multiple mechanics, we need to explode them.
+print("-"*30)
+print("analyzing mechanics...")
+# change string 'A,B,C' into list ['A','B','C']
+df['Mech_List'] = df['Mechanics'].astype(str).apply(lambda x: x.split(','))
+# Explode: one line becomes multiple lines, one line for each mechanism
+df_exploded = df.explode('Mech_List')
+df_exploded['Mech_List'] = df_exploded['Mech_List'].apply(lambda x: x.strip())
+# filter out Unknown
+df_exploded = df_exploded[df_exploded['Mech_List']!='Unknown']
+# Statistics: only consider mechanisms that have occurred at least 100 times (to avoid small sample bias)
+mech_counts = df_exploded['Mech_List'].value_counts()
+valid_mechs = mech_counts[mech_counts > 100].index
+df_valid_mechs = df_exploded[df_exploded['Mech_List'].isin(valid_mechs)]
+# calculate mean of bayes average score in each mechanics
+mech_ratings = df_valid_mechs.groupby('Mech_List')['bayesaverage'].mean().sort_values(ascending=False)
+
+plt.figure(figsize=(12, 8))
+sns.barplot(x=mech_ratings.values, y=mech_ratings.index,hue=mech_ratings.index, palette='viridis',legend=False)
+plt.title('Mechanics by Average Bayes Rating', fontsize=15)
+plt.xlabel('Average Rating')
+plt.axvline(df['bayesaverage'].mean(), color='red', linestyle='--', label='Global Average')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# 6. domains comparison: strategic vs party vs children
+print("-"*30)
+print("analyzing domains...")
+df['Dom_List'] = df['Domains'].astype(str).apply(lambda x: x.split(','))
+df_dom_exploded = df.explode('Dom_List')
+df_dom_exploded['Dom_List'] = df_dom_exploded['Dom_List'].apply(lambda x: x.strip())
+# filter out Unknown
+df_dom_exploded = df_dom_exploded[df_dom_exploded['Dom_List']!='Unknown']
+# sort
+dom_order = df_dom_exploded.groupby('Dom_List')['bayesaverage'].mean().sort_values(ascending=False).index
+plt.figure(figsize=(12, 6))
+sns.boxplot(data=df_dom_exploded, x='bayesaverage', y='Dom_List',hue='Dom_List',legend=False, order=dom_order, palette='Set2')
+plt.title('Rating Distribution by Domain', fontsize=15)
+plt.xlabel('Bayes Average')
+plt.ylabel('')
+plt.tight_layout()
+plt.show()
+
+# 7. play time vs bayes average
+print("-"*30)
+print("analyzing play time...")
+# creating duration bins
+bins = [0,30,60,120,240,9999]
+labels = ['< 30 min', '30-60 min', '1-2 hours', '2-4 hours', '> 4 hours']
+df['Time_Category'] = pd.cut(df['Play Time'],bins=bins,labels=labels)
+plt.figure(figsize=(10, 6))
+sns.violinplot(data=df, x='Time_Category', y='bayesaverage',palette='muted')
+plt.title('Game Duration vs Rating', fontsize=15)
+plt.xlabel('Play Time Category')
+plt.ylabel('Bayes Average')
+plt.tight_layout()
+plt.show()
