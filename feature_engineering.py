@@ -63,21 +63,13 @@ y = df['bayesaverage']
 # split training and testing output_set (80%/20%)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Scaling
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
-
-X_train_final = pd.DataFrame(X_train_scaled, columns=features_cols)
-X_test_final = pd.DataFrame(X_test_scaled, columns=features_cols)
-
 # save processed data for model
 data_to_save = {
-    'X_train': X_train_final,
-    'X_test': X_test_final,
+    'X_train': X_train,
+    'X_test': X_test,
     'y_train': y_train,
     'y_test': y_test,
-    'scaler': scaler,
+    'scaler': StandardScaler(),
     'feature_names': features_cols
 }
 with open('output_set/processed_data.pkl', 'wb') as f:
@@ -85,6 +77,6 @@ with open('output_set/processed_data.pkl', 'wb') as f:
 
 print("-" * 30)
 print("feature engineering completes! data saved in processed_data.pkl")
-print(f"shape of training set: {X_train_final.shape}")
-print(f"shape of test set: {X_test_final.shape}")
+print(f"shape of training set: {X_train.shape}")
+print(f"shape of test set: {X_test.shape}")
 print("-" * 30)

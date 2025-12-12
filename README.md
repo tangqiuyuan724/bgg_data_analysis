@@ -81,3 +81,15 @@ after cutting-off:![year published vs bayes average score(after cutting-off)](im
 * under 30 minutes: It is hard to tell a profound story or develop deep mechanics, resulting in a lower score ceiling.
 * 1-2 hours: It is the most comfortable range for BGG players. It's challenging enough, but not too tiring.
 * over 4 hours: As very few people can play games for more than 4 hours, the sample size is small. Although there are few people, those who are willing to sit down and play for 4 hours are usually die-hard fans and rarely give low scores. The variance here can be huge, either a masterpiece or torture.
+
+# Feature engineering 
+todo
+
+# Modeling
+## advantages of pipeline
+1. Encapsulation
+2. Leakage Prevention
+## Evaluation
+todo
+
+# Optimization
