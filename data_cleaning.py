@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-# 1. loading dataset
+# 1. loading output_set
 print("loading data...")
 # latin1(ISO-8859-1) encoding format has a higher fault tolerance
 # many board games come from Europe especially German, thus including some special characters
@@ -24,7 +24,7 @@ print("after drop null id in BGG_Data_Set...")
 print(df_bgg.info())
 print("-"*30)
 
-# 3. merging two dataset based on id
+# 3. merging two output_set based on id
 # using inner join to make sure only board games that exist in both csv will be retained
 print("after merging data...")
 df = pd.merge(df_bgg, df_ranks[['id', 'bayesaverage','yearpublished']], left_on='ID', right_on='id', how='inner')
@@ -49,6 +49,10 @@ def fix_year(row):
 
 # apply fix year
 df['Year Published'] = df.apply(fix_year, axis=1)
+# transfer 'Year Published' into int
+df['Year Published'] = df['Year Published'].astype(int)
+# drop duplicated column of 'id' and 'year published'
+df = df.drop(columns=['yearpublished','id'],axis=1)
 
 # 4. filtering and cleaning
 # drop invalid values
@@ -57,20 +61,26 @@ df = df[(df['Year Published']>1900) & (df['Year Published']<=2025)]
 after_count = len(df)
 print(f"with cross conference, we fix {before_count-after_count} rows which had invalid year published")
 
-# Mechanics is a text feature, fill missing value with 'Unknown'
-df['Mechanics'] = df['Mechanics'].fillna('Unknown')
-
 # for key numerical features, if missing, delete the row directly, as it cannot be accurately filled
 df = df.dropna(subset=['Complexity Average', 'Min Age', 'Play Time'])
+
+# for text features, fill missing value with 'Unknown'
+df['Mechanics'] = df['Mechanics'].fillna('Unknown')
+df['Domains'] = df['Domains'].fillna('Unknown')
+
+# for numerical feature which will not be used in future training and testing, fill nan with -1 to mark it as an outlier
+df['Owned Users'] = df['Owned Users'].fillna(-1).astype(int)
 print("-"*30)
 
 # 5. check results
-print(f"after cleaning, the final shape of dataset: {df.shape}")
+print(f"after cleaning, the final shape of output_set: {df.shape}")
+print("info of output_set:")
+print(df.info())
 print("preview of the first five rows: ")
 print(df[['ID', 'Name', 'Year Published', 'bayesaverage', 'Mechanics']].head())
 
 # save cleaned data
-df.to_csv("dataset/cleaned_bgg_data.csv", index=False)
+df.to_csv("output_set/cleaned_bgg_data.csv", index=False)
 
 # save the board games data which only exist in the right table
 # these data lack same detail features, such as mechanics, complexity
@@ -84,6 +94,6 @@ print(f"there are {len(bgg_ids)} rows in bgg table")
 print(f"number of board games only existing in ranks table (missing detail features): {len(diff_ids)}")
 
 df_missing_details = df_ranks[df_ranks['id'].isin(diff_ids)].copy()
-df_missing_details.to_csv("dataset/games_without_details.csv", index=False)
+df_missing_details.to_csv("output_set/games_without_details.csv", index=False)
 print("preview of board games data without details:")
 print(df_missing_details.head())
