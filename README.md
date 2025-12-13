@@ -1,5 +1,3 @@
-[TOC]
-
 # choosing features
 to avoid data leakage, we will drop these columns before training:
 * bgg rank/rank: since rank is decided by the bayes average, aka the target.
